@@ -1,13 +1,19 @@
 import {
+  ActivityType,
   Client,
   Events,
   GatewayIntentBits,
   Partials,
 } from "discord.js";
+import { createRequire } from "node:module";
 import { loadConfig } from "./config.js";
 import { ConversationStore, conversationKey } from "./conversation-store.js";
 import { imageAttachments, parsePrompt, splitDiscordMessage } from "./discord-utils.js";
 import { OpenAIResponsesClient } from "./openai.js";
+import { buildPresence } from "./presence.js";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
 
 let config;
 try {
@@ -26,6 +32,7 @@ const client = new Client({
   ],
   partials: [Partials.Channel],
   allowedMentions: { parse: [], repliedUser: false },
+  presence: buildPresence(version, ActivityType.Custom),
 });
 
 const ai = new OpenAIResponsesClient({
@@ -57,7 +64,7 @@ const queues = new Map();
 const lastRequestByUser = new Map();
 
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Ready as ${readyClient.user.tag} | model=${config.openaiModel} | mode=${config.replyMode}`);
+  console.log(`Ready as ${readyClient.user.tag} | version=${version} | model=${config.openaiModel} | mode=${config.replyMode}`);
 });
 
 client.on(Events.MessageCreate, async (message) => {
