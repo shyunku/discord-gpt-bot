@@ -32,11 +32,32 @@ OPENAI_MODEL=사용할 OpenAI 모델 ID
 ## 실행
 
 ```bash
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
-개발 중에는 `npm run dev`, 테스트와 문법 검사는 `npm run check`를 사용합니다.
+개발 중에는 `pnpm dev`, 테스트와 문법 검사는 `pnpm check`를 사용합니다.
+
+## PM2로 운영
+
+PM2가 프로젝트 의존성에 포함되어 있으므로 별도로 전역 설치할 필요가 없습니다.
+
+```bash
+pnpm pm2:start
+pnpm pm2:logs
+```
+
+설정 변경 후 재시작하거나 프로세스를 중지·삭제할 때는 다음 명령을 사용합니다.
+
+```bash
+pnpm pm2:restart
+pnpm pm2:stop
+pnpm pm2:delete
+```
+
+서버 재부팅 후 자동 실행이 필요하면 운영체제에 맞게 `pnpm exec pm2 startup`을 실행하고, 안내되는 관리자 명령을 수행한 뒤 `pnpm exec pm2 save`를 실행하세요.
+
+SQLite 파일과 대화별 처리 순서를 안전하게 유지하기 위해 [ecosystem.config.cjs](./ecosystem.config.cjs)는 단일 인스턴스 `fork` 모드로 설정되어 있습니다.
 
 ## 사용법
 
